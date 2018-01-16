@@ -64,35 +64,64 @@ var stringifiableObjects = [
 // };
 // stringifyJSON(stringifiableObjects);
 
+// var stringifyJSON = function(obj) {
+//   var type = typeof(obj);
+
+//   if (type === 'boolean' || type === 'number' || obj === null) {
+//     return '' + obj;
+//   }
+
+//   if (type === 'string') {
+//     return '"' + obj + '"';
+//   }
+//   if (Array.isArray(obj)) {
+//     var strings = obj.map(function(item) {
+//       return stringifyJSON(item);
+//     });
+//     return '[' + strings.join(',') + ']';
+//   }
+//   if (type === 'object') {
+//     var ans = [];
+//     for (var key in obj) {
+//       if (key === 'functions' || key === 'undefined') {
+//         return '{}';
+//       }
+//       ans.push(stringifyJSON(key) + ':' + stringifyJSON(obj[key]));
+//     }
+//     return '{' + ans.join(',') + '}';
+//   }
+// };
+// stringifyJSON(stringifiableObjects);
+
+
 var stringifyJSON = function(obj) {
-  var type = typeof(obj);
+  var leftBasket = '[';
+  var rightBasket = ']';
+  var semiColin = ':';
+  var leftBracket = '{';
+  var rightBracket = '}';
 
-  if (type === 'boolean' || type === 'number' || obj === null) {
-    return '' + obj;
+  var result = [];
+  if (Array.isArray(obj)) {
+    for (var i = 0; i < obj.length; i++) {
+      result.push(stringifyJSON(obj[i]));
+    }
+    return leftBasket + result.join(',') + rightBasket;
   }
-
-  if (type === 'string') {
+  if (obj && typeof obj === 'object') {
+    for (var key in obj) {
+      if (typeof obj[key] === 'function' || obj[key] === undefined) {
+        continue;
+      }
+      result.push(stringifyJSON(key) + semiColin + stringifyJSON(obj[key]));
+    }
+    return leftBracket + result.join(',') + rightBracket;
+  }
+  if (typeof obj === 'string') {
     return '"' + obj + '"';
   }
-  if (Array.isArray(obj)) {
-    var strings = obj.map(function(item) {
-      return stringifyJSON(item);
-    });
-    return '[' + strings.join(',') + ']';
-  }
-  if (type === 'object') {
-    var ans = [];
-    for (var key in obj) {
-      if (key === 'functions' || key === 'undefined') {
-        return '{}';
-      }
-      ans.push(stringifyJSON(key) + ':' + stringifyJSON(obj[key]));
-    }
-    return '{' + ans.join(',') + '}';
-  }
+  return '' + obj;
 };
-stringifyJSON(stringifiableObjects);
-
 
 
 
